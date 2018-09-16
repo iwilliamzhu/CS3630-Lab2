@@ -51,6 +51,9 @@ class DroneState(State):
     def __init__(self, robot):
         self.robot = robot
         print ('Current state:', str(self))
+        """
+        Do action here
+        """
 
         self.return_to_idle()
 
@@ -65,6 +68,9 @@ class OrderState(State):
     def __init__(self, robot):
         self.robot = robot
         print ('Current state:', str(self))
+        """
+        Do action here
+        """
 
         self.return_to_idle()
         
@@ -81,7 +87,10 @@ class InspectionState(State):
     def __init__(self, robot):
         self.robot = robot
         print ('Current state:', str(self))
-
+        """
+        Do action here
+        """
+        
         self.return_to_idle()
         
     def return_to_idle(self):
