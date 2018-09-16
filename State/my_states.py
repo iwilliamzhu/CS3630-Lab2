@@ -93,10 +93,7 @@ class OrderState(State):
         """
         Do action here
         """
-        current action = robot.drive_straight(25, 50)
-        time.sleep(3)
-
-
+        current_action = robot.drive_wheels(50.0, 120.0, duration=9.0)
 
         self.return_to_idle()
         
