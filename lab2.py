@@ -23,8 +23,6 @@ def run(sdk_conn):
     robot.camera.color_image_enabled = False
     robot.camera.enable_auto_exposure()
 
-    robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
-
     # instantiate simple device in Idle State
     device = StateMachine(robot)
 

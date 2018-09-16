@@ -2,6 +2,8 @@ import sys
 sys.path.append('../')
 from state import State
 import time
+import cozmo
+from cozmo.util import degrees, distance_mm, speed_mmps
 import classifyimage
 
 class IdleState(State):
@@ -21,6 +23,7 @@ class IdleState(State):
         print ('Current state:', str(self))
         while True:
             time.sleep(4)
+            robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
             raw_image = robot.world.latest_image.raw_image
             predicted_label = classifyimage.classify_image(raw_image)
             print(predicted_label)
@@ -90,7 +93,21 @@ class InspectionState(State):
         """
         Do action here
         """
-        
+        count_turns = 0
+        while count_turns <= 4:
+            action1 = robot.drive_straight(distance_mm(200), speed_mmps(50), in_parallel=True)
+            action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0)
+            action1.wait_for_completed()
+            action2.wait_for_completed()
+            action1 = robot.turn_in_place(degrees(90), in_parallel=True)
+            action2 = robot.set_lift_height(1.0, in_parallel=True, duration=3.0)
+            action1.wait_for_completed()
+            action2.wait_for_completed()
+
+            count_turns = count_turns + 1
+
+        action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0)
+        action2.wait_for_completed
         self.return_to_idle()
         
     def return_to_idle(self):
