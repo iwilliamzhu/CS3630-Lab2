@@ -112,19 +112,18 @@ class InspectionState(State):
         Do action here
         """
         count_turns = 0
-        while count_turns <= 4:
+        while count_turns <= 3:
             action1 = robot.drive_straight(distance_mm(200), speed_mmps(30), in_parallel=True)
             action2 = robot.set_lift_height(1.0, in_parallel=True, duration=3.0)
-            action1.wait_for_completed()
             action2.wait_for_completed()
             action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0)
             action2.wait_for_completed()
+
+            action1.wait_for_completed()
             action1 = robot.turn_in_place(degrees(90), in_parallel=True).wait_for_completed()
 
             count_turns = count_turns + 1
 
-        action1 = robot.turn_in_place(degrees(90), in_parallel=True)
-        action1.wait_for_completed()
         action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0).wait_for_completed()
         self.return_to_idle()
         
