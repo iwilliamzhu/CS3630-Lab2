@@ -4,7 +4,6 @@ Mingyang Zhu
 '''
 
 import sys
-
 sys.path.append('./State')
 
 import cozmo
@@ -15,7 +14,6 @@ from sklearn.externals import joblib
 from skimage import io, feature, filters, exposure, color
 
 from state_machine import StateMachine
-import classifyimage
 
 def run(sdk_conn):
     clf = joblib.load('classifier.pkl')
@@ -28,16 +26,7 @@ def run(sdk_conn):
     robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
 
     # instantiate simple device in Idle State
-    device = StateMachine()
-
-    while True:
-        time.sleep(4)
-        raw_image = robot.world.latest_image.raw_image
-        predicted_label = classifyimage.classify_image(raw_image)
-        print(predicted_label)
-        if predicted_label != 'none':
-            robot.say_text(predicted_label).wait_for_completed()
-            device.on_event(predicted_label)
+    device = StateMachine(robot)
 
 if __name__ == '__main__':
     cozmo.setup_basic_logging()

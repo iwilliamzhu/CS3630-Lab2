@@ -1,4 +1,8 @@
+import sys
+sys.path.append('../')
 from state import State
+import time
+import classifyimage
 
 class IdleState(State):
     """
@@ -12,46 +16,28 @@ class IdleState(State):
         aware that as a result of rescaling they are not as detailed as the grayscale images.
     """
     stateName = ''
-    def __init__(self):
+    def __init__(self, robot):
+        self.robot = robot
         print ('Current state:', str(self))
-        """
-        robot = sdk_conn.wait_for_robot()
-        robot.camera.image_stream_enabled = True
-        robot.camera.color_image_enabled = False
-        robot.camera.enable_auto_exposure()
+        while True:
+            time.sleep(4)
+            raw_image = robot.world.latest_image.raw_image
+            predicted_label = classifyimage.classify_image(raw_image)
+            print(predicted_label)
+            if predicted_label != 'none':
+                robot.say_text(predicted_label).wait_for_completed()
+                self.on_event(predicted_label, robot)
 
-        robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
-
-        myargs = sys.argv[1:]
-        
-        if len(myargs) <= 1:
-            sys.exit("Incorrect arguments")
-
-        time.sleep(.5)
-        latest_image = robot.world.latest_image
-        new_image = latest_image.raw_image
-
-        robot.say_text(stateName).wait_for_completed()
-
-        timestamp = datetime.datetime.now().strftime("%dT%H%M%S%f")
-
-        new_image.save("./lab2imgs/" + str(type) + "_" + timestamp + ".bmp")
-
-        time.sleep(4)
-        
-    
-    num_images_per_type = int(myargs[0])  # number of images to take of each type of object
-    """
-    def on_event(self, event):
+    def on_event(self, event, robot):
         if event == 'drone':
             stateName = 'drone'
-            return DroneState()
+            return DroneState(robot)
         if event == 'order':
             stateName = 'order'
-            return OrderState()
+            return OrderState(robot)
         if event == 'inspection':
             stateName = 'inspection'
-            return InspectionState()
+            return InspectionState(robot)
 
         return self
 
@@ -62,22 +48,24 @@ class DroneState(State):
         10cm. Then return to Idle state. 
     """
 
-    def __init__(self):
+    def __init__(self, robot):
+        self.robot = robot
         print ('Current state:', str(self))
 
     def return_to_idle(self):
-        return IdleState()
+        return IdleState(self.robot)
 
 class OrderState(State):
     """
         Use the drive_wheels function to have the robot drive in a circle with an
         approximate radius of 10cm. Then return to Idle state.
     """
-    def __init__(self):
+    def __init__(self, robot):
+        self.robot = robot
         print ('Current state:', str(self))
         
     def return_to_idle(self):
-        return IdleState()
+        return IdleState(self.robot)
 
 class InspectionState(State):
     """
@@ -86,8 +74,9 @@ class InspectionState(State):
         to complete lowering or raising the lift). Lower the lift at the end of the behavior, and return to
         Idle state
     """
-    def __init__(self):
+    def __init__(self, robot):
+        self.robot = robot
         print ('Current state:', str(self))
         
     def return_to_idle(self):
-        return IdleState()
+        return IdleState(self.robot)
