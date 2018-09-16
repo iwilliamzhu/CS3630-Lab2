@@ -6,6 +6,7 @@ import cozmo
 from cozmo.util import degrees, distance_mm, speed_mmps
 import cozmo.behavior
 import classifyimage
+import time
 
 class IdleState(State):
     """
@@ -92,6 +93,10 @@ class OrderState(State):
         """
         Do action here
         """
+        current action = robot.drive_straight(25, 50)
+        time.sleep(3)
+
+
 
         self.return_to_idle()
         
