@@ -57,6 +57,23 @@ class DroneState(State):
         """
         Do action here
         """
+        lookaround = robot.start_behavior(behavior.BehaviorTypes.LookAroundInPlace)
+        cube = robot.world.wait_until_observe_num_objects(num=1, object_type=cozmo.objects.LightCube, timeout=10)
+        lookaround.stop()
+        # ideally have a check here)
+
+        if len(cube) == 1:
+            current_action = robot.pickup_object(cube[0], num_retries=3)
+            current_action.wait_for_completed()
+            if current_action.has_failed:
+                code, reason = current_action.failure_reason
+                result = current_action.result
+                print("Pickup Cube failed: code=%s reason='%s' result=%s" % (code, reason, result))
+                return
+            robot.drive_straight(100, 50).wait_for_completed()
+            robot.place_object_on_ground_here(cube[0], num_retries=0).wait_for_completed()
+            robot.drive_straight(-100, 50).wait_for_completed()
+
 
         self.return_to_idle()
 
