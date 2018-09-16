@@ -4,6 +4,7 @@ from state import State
 import time
 import cozmo
 from cozmo.util import degrees, distance_mm, speed_mmps
+import cozmo.behavior
 import classifyimage
 
 class IdleState(State):
@@ -57,7 +58,7 @@ class DroneState(State):
         """
         Do action here
         """
-        lookaround = robot.start_behavior(behavior.BehaviorTypes.LookAroundInPlace)
+        lookaround = robot.start_behavior(cozmo.behavior.BehaviorTypes.LookAroundInPlace)
         cube = robot.world.wait_until_observe_num_objects(num=1, object_type=cozmo.objects.LightCube, timeout=10)
         lookaround.stop()
         # ideally have a check here)
@@ -70,9 +71,9 @@ class DroneState(State):
                 result = current_action.result
                 print("Pickup Cube failed: code=%s reason='%s' result=%s" % (code, reason, result))
                 return
-            robot.drive_straight(100, 50).wait_for_completed()
+            robot.drive_straight(distance_mm(100), speed_mmps(50)).wait_for_completed()
             robot.place_object_on_ground_here(cube[0], num_retries=0).wait_for_completed()
-            robot.drive_straight(-100, 50).wait_for_completed()
+            robot.drive_straight(distance_mm(-100), speed_mmps(50)).wait_for_completed()
 
 
         self.return_to_idle()
@@ -112,19 +113,19 @@ class InspectionState(State):
         """
         count_turns = 0
         while count_turns <= 4:
-            action1 = robot.drive_straight(distance_mm(200), speed_mmps(50), in_parallel=True)
+            action1 = robot.drive_straight(distance_mm(200), speed_mmps(30), in_parallel=True)
             action2 = robot.set_lift_height(1.0, in_parallel=True, duration=3.0)
             action1.wait_for_completed()
             action2.wait_for_completed()
-            action1 = robot.turn_in_place(degrees(90), in_parallel=True)
             action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0)
-            action1.wait_for_completed()
             action2.wait_for_completed()
+            action1 = robot.turn_in_place(degrees(90), in_parallel=True).wait_for_completed()
 
             count_turns = count_turns + 1
 
-        action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0)
-        action2.wait_for_completed
+        action1 = robot.turn_in_place(degrees(90), in_parallel=True)
+        action1.wait_for_completed()
+        action2 = robot.set_lift_height(0.0, in_parallel=True, duration=3.0).wait_for_completed()
         self.return_to_idle()
         
     def return_to_idle(self):
