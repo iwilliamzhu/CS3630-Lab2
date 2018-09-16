@@ -11,6 +11,8 @@ import numpy as np
 from sklearn.externals import joblib
 from skimage import io, feature, filters, exposure, color
 
+import simple_device
+
 def run(sdk_conn):
     clf = joblib.load('classifier.pkl')
 
@@ -21,6 +23,8 @@ def run(sdk_conn):
 
     robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
 
+    # instantiate simple device in Idle State
+    device = SimpleDevice()
 
     while True:
         time.sleep(4)
@@ -30,6 +34,8 @@ def run(sdk_conn):
         print(predicted_label)
         if predicted_label != 'none':
             robot.say_text(predicted_label).wait_for_completed()
+            device.on_event(predicted_label)
+
 
 def extract_image_features(data):
     l = []
@@ -44,6 +50,8 @@ def extract_image_features(data):
 
     feature_data = np.array(l)
     return(feature_data)
+
+def 
 
 if __name__ == '__main__':
     cozmo.setup_basic_logging()

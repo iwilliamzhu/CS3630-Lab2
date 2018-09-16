@@ -2,7 +2,7 @@
 
 from my_states import IdleState
 
-class SimpleDevice(object):
+class StateMachine(object):
     """ 
     A simple state machine that mimics the functionality of a device from a 
     high level.

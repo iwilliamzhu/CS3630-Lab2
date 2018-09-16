@@ -1,8 +1,4 @@
 from state import State
-import sys
-import cozmo
-import datetime
-import time
 
 class IdleState(State):
     """
@@ -42,10 +38,10 @@ class IdleState(State):
         new_image.save("./lab2imgs/" + str(type) + "_" + timestamp + ".bmp")
 
         time.sleep(4)
-        """
+        
     
     num_images_per_type = int(myargs[0])  # number of images to take of each type of object
-
+    """
     def on_event(self, event):
         if event == 'drone':
             stateName = 'drone'
@@ -65,6 +61,10 @@ class DroneState(State):
         pick up the cube, drive forward with the cube for 10cm, put down the cube, and drive backward
         10cm. Then return to Idle state. 
     """
+
+    def __init__(self):
+        print ('Current state:', str(self))
+
     def return_to_idle(self):
         return IdleState()
 
@@ -73,6 +73,9 @@ class OrderState(State):
         Use the drive_wheels function to have the robot drive in a circle with an
         approximate radius of 10cm. Then return to Idle state.
     """
+    def __init__(self):
+        print ('Current state:', str(self))
+        
     def return_to_idle(self):
         return IdleState()
 
@@ -83,5 +86,8 @@ class InspectionState(State):
         to complete lowering or raising the lift). Lower the lift at the end of the behavior, and return to
         Idle state
     """
+    def __init__(self):
+        print ('Current state:', str(self))
+        
     def return_to_idle(self):
         return IdleState()

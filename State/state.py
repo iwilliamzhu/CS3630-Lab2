@@ -3,7 +3,10 @@
 class State(object):
 
     def __init__(self):
-        print ('Current state:', str(self))
+        """
+        handle order given by image
+        """
+        pass
 
     def __repr__(self):
         return self.__str__()
