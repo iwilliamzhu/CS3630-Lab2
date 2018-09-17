@@ -8,6 +8,9 @@ import cozmo.behavior
 import classifyimage
 import time
 
+def most_common(lst):
+    return max(set(lst), key=lst.count)
+
 class IdleState(State):
     """
         Monitor stream of images from the camera. Classify each image using the model you
@@ -24,11 +27,15 @@ class IdleState(State):
         self.robot = robot
         print ('Current state:', str(self))
         while True:
-            time.sleep(4)
             robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
-            raw_image = robot.world.latest_image.raw_image
-            predicted_label = classifyimage.classify_image(raw_image)
-            print(predicted_label)
+            labels = []
+            for x in xrange(4):
+                time.sleep(1)
+                raw_image = robot.world.latest_image.raw_image
+                label = classifyimage.classify_image(raw_image)
+                labels.append(label)
+            
+            predicted_label = most_common(labels)
             if predicted_label != 'none':
                 robot.say_text(predicted_label).wait_for_completed()
                 self.on_event(predicted_label, robot)
