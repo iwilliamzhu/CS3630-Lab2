@@ -29,7 +29,7 @@ class IdleState(State):
         while True:
             robot.set_head_angle(cozmo.util.degrees(0)).wait_for_completed()
             labels = []
-            for x in xrange(4):
+            for x in range(4):
                 time.sleep(1)
                 raw_image = robot.world.latest_image.raw_image
                 label = classifyimage.classify_image(raw_image)
